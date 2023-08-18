@@ -145,6 +145,11 @@ h1 {
     font-size: 14px;
 }
 
+.recipes-section > article > div:nth-child(2) > div:nth-child(3) > div {
+    height: 84px;
+    overflow: hidden;
+}
+
 .ingredients-list {
     display: grid;
     grid-template-columns: 1fr 1fr;
