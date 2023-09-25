@@ -71,22 +71,75 @@ h1 {
 .filter-section {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+}
+
+.filter-slider {
+    cursor: pointer;
 }
 
 .filter-section > div:nth-child(1) {
     display: flex;
     gap: 65px;
-    align-items: center;
+    align-items: flex-start;
 }
 
 .filter-section > div:nth-child(1) > div {
+    border-radius: 11px;
+    background-color: #ffffff;
+    height: 55px;
+    overflow: hidden;
+    transition: all 200ms ease;
+}
+
+.filter-section > div:nth-child(1) > div > div:nth-child(1) {
     display: flex;
     align-items: center;
     gap: 63px;
-    border-radius: 11px;
-    background-color: #ffffff;
-    padding: 17px 16px;
+    justify-content: space-between;
+    padding: 16px 16px 0 16px;
+}
+
+.filter-section > div:nth-child(1) > div > div:nth-child(1) > i{
+    transition: all 200ms ease;
+}
+
+.filter-section > div:nth-child(1) > div > div:nth-child(2) {
+    height: 36px;
+    margin: 15px 0 20px 0;
+    position: relative;
+    padding: 0px 16px;
+}
+
+.filter-section > div:nth-child(1) > div > div:nth-child(2) > input {
+    height: 100%;
+    width: 100%;
+    border: 1px solid #C6C6C6;
+}
+
+.filter-section > div:nth-child(1) > div > div:nth-child(2) > i {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 27px;
+    font-size: 14px;
+}
+
+.filter-section ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    overflow: auto;
+}
+
+.filter-section ul > li {
+    font-size: 14px;
+    padding: 5px 16px;
+    cursor: pointer;
+}
+
+.filter-section ul > li:hover {
+    background-color: #FFD15B;
 }
 
 .filter-section > div:nth-child(2) {
@@ -164,4 +217,31 @@ h1 {
 
 .ingredients-list > div > span:nth-child(2) {
     color: #7A7A7A;
+}
+
+.tags-section {
+    padding: 0;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 32px;
+    flex-wrap: wrap;
+}
+
+.tags-section > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 60px;
+    background-color: #FFD15B;
+    color: #1B1B1B;
+    border-radius: 10px;
+    padding: 17px;
+    cursor: pointer;
+}
+
+#no-result {
+    position: absolute;
+    left: 35px;
+    top: 82px;
+    color: #ff0000;
 }
