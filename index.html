@@ -32,37 +32,65 @@
             DU QUOTIDIEN, SIMPLES ET DELICIEUSES
         </h1>
         <div class="searchbar-container">
-            <input type="text" placeholder="Recherchez une recette, un ingrédient, ...">
+            <input type="text" placeholder="Recherchez une recette, un ingrédient, ..." id="main-search-bar" name="main-search">
             <button>
                 <i class="fa-solid fa-magnifying-glass" style="color: #ffffff;"></i>
             </button>
+            <div id="no-result"></div>
         </div>
     </header>
     <main>
         <section class="filter-section">
             <div>
                 <div>
-                    <span>
-                        Ingrédients
-                    </span>
-                    <i class="fa-solid fa-chevron-down" style="color: #1b1b1b;"></i>
+                    <div class="filter-slider" id="ingredients-slider" data-slide="up">
+                        <span>
+                            Ingrédients
+                        </span>
+                        <i class="fa-solid fa-chevron-down" style="color: #1b1b1b;"></i>
+                    </div>
+                    <div>
+                        <input type="text" name="ingredient-search" id="ingredient-search">
+                        <i class="fa-solid fa-magnifying-glass" style="color: #C6C6C6;"></i>
+                    </div>
+                    <ul id="ingredients-slider-list" class="ing-list">
+                    </ul>
                 </div>
                 <div>
-                    <span>
-                        Appareils
-                    </span>
-                    <i class="fa-solid fa-chevron-down" style="color: #1b1b1b;"></i>
+                    <div class="filter-slider" id="appareils-slider" data-slide="up">
+                        <span>
+                            Appareils
+                        </span>
+                        <i class="fa-solid fa-chevron-down" style="color: #1b1b1b;"></i>
+                    </div>
+                    <div>
+                        <input type="text" name="appareil-search" id="appareil-search">
+                        <i class="fa-solid fa-magnifying-glass" style="color: #C6C6C6;"></i>
+                    </div>
+                    <ul id="appareils-slider-list">
+                        <li data-display="true">Test</li><li data-display="true">Test</li><li data-display="true">Test</li><li data-display="true">Test</li></ul>
                 </div>
                 <div>
-                    <span>
-                        Ustensiles
-                    </span>
-                    <i class="fa-solid fa-chevron-down" style="color: #1b1b1b;"></i>
+                    <div class="filter-slider" id="ustensils-slider" data-slide="up">
+                        <span>
+                            Ustensiles
+                        </span>
+                        <i class="fa-solid fa-chevron-down" style="color: #1b1b1b;"></i>
+                    </div>
+                    <div>
+                        <input type="text" name="ustensil-search" id="ustensil-search">
+                        <i class="fa-solid fa-magnifying-glass" style="color: #C6C6C6;"></i>
+                    </div>
+                    <ul id="ustensils-slider-list">
+                        <li data-display="true">Test</li><li data-display="true">Test</li></ul>
                 </div>
             </div>
             <div>
                 1500 recettes
             </div>
+        </section>
+        <section class="tags-section">
+            
         </section>
         <section class="recipes-section">
             
