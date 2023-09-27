@@ -168,6 +168,7 @@ function displayTags(tag) {
 
 function displayData(recipes) {
     const recipesSection = document.querySelector(".recipes-section");
+    recipesSection.innerHTML = ''//réinitialiser la section
     const ingredientsList = document.getElementById("ingredients-slider-list");
 
     for (let i=0; i<recipes.length; i++) {
