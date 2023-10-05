@@ -1,10 +1,10 @@
 const searchBar = document.getElementById('main-search-bar')
 
 searchBar.addEventListener('keyup', (event) => {
-    search(searchBar.value)
+    search(searchBar.value, 'search-bar')
 })
 
-const search = (term) => {
+const search = (term, source) => {
 
     if (term.length >= 3) { //lancer la recherche si 3 caractères minimum
 
@@ -39,11 +39,26 @@ const search = (term) => {
         //reconstruire la section des recettes avec les résultats obtenus
         displayData(globalResults)
 
+        if (source === "ingredients-list") {
+
+            displayTags(term)
+
+        }
+
+        if (source === "search-bar") {
+
+            const sliders = ['ingredients-slider', 'appareils-slider', 'ustensils-slider']
+            sliders.forEach((e) => {
+                sliderClose(e)
+            })
+
+        }
+
     }
 
     else {
 
-        displayData(recipes)
+        //displayData(recipes)
 
     }
 }

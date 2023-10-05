@@ -1,42 +1,52 @@
-const toggleSlider = (sliderId) => {
-    const slider = document.getElementById(sliderId)
-    const sliderState = slider.getAttribute('data-slide')
-    
-    if (sliderState === 'up') {
-        slider.setAttribute('data-slide', 'down')
-        slider.children[0].children[1].style.transform = 'rotate(180deg)' //retourner la flèche
-        sliderResize(sliderId)
-    }
-    else if (sliderState === 'down') {
-        sliderClose(sliderId)
-    }
+//Ouvrir les champs de recherche avancée
+const sliders = document.querySelectorAll('.filter-slider')
+sliders.forEach((e) => {
+    const sliderId = e.getAttribute('id')
+    e.addEventListener('click', event => {
+        if (e.getAttribute('data-slide') === "up")
+        {
+            const listId = sliderId+'-list'
+            sliderResize(listId, sliderId)
+        }
+        else if (e.getAttribute('data-slide') === "down")
+        {
+            closeSlider(sliderId) 
+        }
+    })
+})
 
+const sliderResize = (listId, sliderId) => {
+    const slider = document.getElementById(sliderId)
+    const childrenList = document.getElementById(listId).childNodes
+    let elementsNbr = 0
+    for (let i=1; i<childrenList.length; i++) { //commencer par 1 car le 0 est un "text"
+        if (childrenList[i].getAttribute('data-display') === 'true') {
+            elementsNbr++
+        }
+    }
+    elementsNbr >= 7 ? ulHeight = 186 : ulHeight = 31*elementsNbr
+    let divHeight = ulHeight + 112
+    const children = slider.childNodes
+    for (let i=0; i<children.length; i++) {
+        if (children[i].nodeName === "I") {
+            children[i].style.transform = 'rotate(180deg)'
+        }
+    }
+    slider.parentNode.style.height = divHeight+"px"
+    document.getElementById(sliderId+'-list').style.height = ulHeight+"px"
+    slider.setAttribute('data-slide', 'down')
 }
 
-const sliderResize = (sliderId) => {
-
+const closeSlider = (sliderId) => {
     const slider = document.getElementById(sliderId)
-    const listLength = slider.children[2].children[1].children.length
-    let sliderHeight = listLength > 6 ? 
-
-                        315
-                        
-                        :
-
-                        126 + 31*listLength
-
-    slider.style.height = sliderHeight+'px'
-
-}
-
-const sliderClose = (sliderId) => {
-
-    const slider = document.getElementById(sliderId)
-
+    const children = slider.childNodes
+    for (let i=0; i<children.length; i++) {
+        if (children[i].nodeName === "I") {
+            children[i].style.transform = 'rotate(0deg)'
+        }
+    }
+    slider.parentNode.style.height = "55px"
     slider.setAttribute('data-slide', 'up')
-    slider.children[0].children[1].style.transform = 'rotate(0deg)' //retourner la flèche
-    slider.style.height = '55px'
-
 }
 
 function recipeFactory(recipe) {
@@ -129,7 +139,7 @@ function ingredientsFactory(ingredients) {
     function getIngredientDOM() {
         
         const li = document.createElement('li')
-        li.setAttribute('data-selected', 'false')
+        li.setAttribute('data-display', 'true')
         li.setAttribute('data-name', ingredients)
         li.setAttribute('onclick', 'search("'+ingredients+'", "ingredients-list")')
         li.textContent = ingredients
@@ -148,7 +158,7 @@ const ingredientsFilterUpdate = (displayedRecipes) => {
     ingredientsFilter = displayedRecipes.length > 1 ?
                         //1er map donne tout le sous-tableau ingredients avec les quantités et les unités
                         //2ème map sur ce sous-tableau pour ne sortir que des tableaux d'ingrédients
-                        displayedRecipes.map(recipe => recipe.ingredients.map(ingredients => ingredients.ingredient))
+                        ingredientsFilter = displayedRecipes.map(recipe => recipe.ingredients.map(ingredients => ingredients.ingredient))
                         //réduire en une string composée de tous les ingrédients de toutes les recettes
                         .reduce((allIngredients, ingredient) => allIngredients + ',' + ingredient)
                         //transformer cette string en un tableau
@@ -168,6 +178,7 @@ const ingredientsFilterUpdate = (displayedRecipes) => {
                         .map(ingredient => ingredient.slice(0,1).toUpperCase()+ingredient.slice(1).toLowerCase())
                         .filter((ingredient, ingredientIndex, table) => table.findIndex(t => (t === ingredient)) === ingredientIndex)
                         .sort()
+    
 
 }
 
@@ -200,14 +211,6 @@ function displayTags(tag) {
     const tagDOM = tagModel.getTagDOM();
     const tagsSection = document.querySelector('.tags-section')
     tagsSection.appendChild(tagDOM); //construire son affichage en tant que tag
-
-    //remonter le tag sélectionné en haut de la liste
-    const selectedTag = document.querySelector('li[data-name="'+tag+'"]')
-    const tagType = selectedTag.parentNode.getAttribute('id').slice(0,-12)
-    const selectedTagsList = document.getElementById('selected-'+tagType)
-    selectedTagsList.appendChild(selectedTag)
-    selectedTag.setAttribute('data-selected', 'true')
-    selectedTag.setAttribute('onclick', 'removeTag("'+tag+'")')
 }
 
 function displayData(recipes) {
@@ -216,31 +219,19 @@ function displayData(recipes) {
     const ingredientsList = document.getElementById("ingredients-slider-list");
     ingredientsList.innerHTML = ''//réinitialiser la liste des ingrédients
 
-    recipes.map(recipe => {
-        const recipeModel = recipeFactory(recipe);
-        const recipeCardDOM = recipeModel.getRecipeCardDOM();
-        recipesSection.appendChild(recipeCardDOM);
-    })
-
-    /*for (let i=0; i<recipes.length; i++) {
+    for (let i=0; i<recipes.length; i++) {
         const recipeModel = recipeFactory(recipes[i]);
         const recipeCardDOM = recipeModel.getRecipeCardDOM();
         recipesSection.appendChild(recipeCardDOM);
-    }*/
+    }
 
     ingredientsFilterUpdate(recipes)
-
-    ingredientsFilter.map(ingredientFilter => {
-        const ingredientModel = ingredientsFactory(ingredientFilter);
-        const ingredientDOM = ingredientModel.getIngredientDOM();
-        ingredientsList.appendChild(ingredientDOM);
-    })
     
-    /*for (let i=0; i<ingredientsFilter.length; i++) {
+    for (let i=0; i<ingredientsFilter.length; i++) {
         const ingredientModel = ingredientsFactory(ingredientsFilter[i]);
         const ingredientDOM = ingredientModel.getIngredientDOM();
         ingredientsList.appendChild(ingredientDOM);
-    }*/
+    }
 
 }
 

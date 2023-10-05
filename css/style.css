@@ -88,6 +88,7 @@ h1 {
     border-radius: 11px;
     background-color: #ffffff;
     height: 55px;
+    max-height: 315px;
     overflow: hidden;
     transition: all 200ms ease;
 }
@@ -125,20 +126,53 @@ h1 {
     font-size: 14px;
 }
 
-.filter-section ul {
+.tags-list {
+    overflow: auto;
+    max-height: 204px;
+}
+
+.filter-list, .selected-filter-list {
     margin: 0;
     padding: 0;
     list-style-type: none;
-    overflow: auto;
 }
 
-.filter-section ul > li {
+.filter-list > li, .selected-filter-list > li {
     font-size: 14px;
     padding: 5px 16px;
     cursor: pointer;
 }
 
-.filter-section ul > li:hover {
+.selected-filter-list > li {
+    background-color: #FFD15B;
+    margin-bottom: 2px;
+    position: relative;
+}
+
+.selected-filter-list > li:hover {
+    font-weight: 700;
+}
+
+.selected-filter-list > li:hover::after {
+    content: 'x';
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background-color: #1B1B1B;
+    color: #FFD15B;
+    padding: 0px 6px 3px 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    font-size: 0.8em;
+}
+
+.selected-filter-list > li:last-child {
+    margin-bottom: 15px;
+}
+
+.filter-list > li:hover, .selected-filter-list > li:hover {
     background-color: #FFD15B;
 }
 
