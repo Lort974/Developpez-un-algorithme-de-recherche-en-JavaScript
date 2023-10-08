@@ -1,3 +1,5 @@
+/**FOR LOOP VERSION */
+
 const toggleSlider = (sliderId) => {
     const slider = document.getElementById(sliderId)
     const sliderState = slider.getAttribute('data-slide')

@@ -1,3 +1,5 @@
+/**FOR LOOP VERSION */
+
 /**
  * RECHERCHE DE FILTRES
  */
