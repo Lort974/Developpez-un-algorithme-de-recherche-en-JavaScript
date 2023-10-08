@@ -90,6 +90,7 @@ h1 {
     height: 55px;
     max-height: 315px;
     overflow: hidden;
+    width: 222px;
     transition: all 200ms ease;
 }
 
@@ -116,6 +117,8 @@ h1 {
     height: 100%;
     width: 100%;
     border: 1px solid #C6C6C6;
+    font-size: 14px;
+    padding: 10px;
 }
 
 .filter-section > div:nth-child(1) > div > div:nth-child(2) > i {

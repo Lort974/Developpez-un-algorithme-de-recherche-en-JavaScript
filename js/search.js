@@ -1,3 +1,43 @@
+/**
+ * RECHERCHE DE FILTRES
+ */
+
+const filterSearchBars = [
+    document.getElementById('ingredient-search'),
+    document.getElementById('appliance-search'),
+    document.getElementById('ustensil-search')
+]
+
+//appel de la recherche
+filterSearchBars.forEach(bar => {
+    bar.addEventListener('keyup', () => {
+        filterSearch(bar.value, bar.getAttribute('id'))
+    })
+})
+
+const filterSearch = (term, source) => {
+    const listType = source.slice(0, -7) + 's' //"ingredient-search" devient "ingredients" par exemple
+    //se placer sur la bonne catagorie :
+    const filterList = document.querySelectorAll('.tags-list[list-type="'+listType+'"] > .filter-list > li')
+    let filterNames = [] //stocker tous les noms des filtre disponibles
+    filterList.forEach(element => {
+        filterName = element.getAttribute('data-name')
+        filterNames.push(filterName)
+    })
+    //cacher ceux qui ne contiennent pas le terme recherché :
+    const filterToHide = filterNames.filter(name => !name.toLowerCase().includes(term.toLowerCase()))
+    filterToHide.forEach(name => {
+        const hide = document.querySelector('.tags-list[list-type="'+listType+'"] > .filter-list > li[data-name="'+name+'"]')
+        hide.style.display = 'none'
+    })
+    //montrer ceux qui contiennent le terme recherché :
+    const filterToShow = filterNames.filter(name => name.toLowerCase().includes(term.toLowerCase()))
+    filterToShow.forEach(name => {
+        const show = document.querySelector('.tags-list[list-type="'+listType+'"] > .filter-list > li[data-name="'+name+'"]')
+        show.style.display = 'block'
+    })
+}
+
 const searchBar = document.getElementById('main-search-bar')
 
 searchBar.addEventListener('keyup', (event) => {
@@ -89,9 +129,8 @@ const search = (term, source) => {
             
             //effacer la searchBar
             searchBar.value = ''
+
         }
-
-
         
         //stocker tous les tags dans un tableau
         //maper ce tableau pour sortir un objet du type : [{"term":"term1","source":"source1"},{"term":"term2","source":"source2"}]
@@ -115,4 +154,17 @@ const search = (term, source) => {
 
     }
 
+    //redimensionner les sliders ouverts
+    const sliders = ['ingredients-slider', 'appliances-slider', 'ustensils-slider']
+    sliders.forEach(sliderId => {
+        const sliderStatus = document.getElementById(sliderId).getAttribute('data-slide')
+        if (sliderStatus === 'down') {
+            sliderResize(sliderId)            
+        }
+    })
+
+    //effacer les barres de recherche de filtres :
+    filterSearchBars.forEach(bar => bar.value = '')
+
 }
+
