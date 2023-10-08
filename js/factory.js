@@ -124,15 +124,16 @@ function recipeFactory(recipe) {
     return { getRecipeCardDOM }
 }
 
-function ingredientsFactory(ingredients) {
+function tagsListsFactory(name, type) {
 
     function getIngredientDOM() {
         
         const li = document.createElement('li')
         li.setAttribute('data-selected', 'false')
-        li.setAttribute('data-name', ingredients)
-        li.setAttribute('onclick', 'search("'+ingredients+'", "ingredients-list")')
-        li.textContent = ingredients
+        li.setAttribute('data-name', name)
+        li.setAttribute('data-type', type)
+        li.setAttribute('onclick', 'search("'+name+'", "'+type+'-list")')
+        li.textContent = name
 
         return (li)
     }
@@ -142,8 +143,13 @@ function ingredientsFactory(ingredients) {
 
 //construire le tableau des ingrédients à filtrer
 let ingredientsFilter = []
+let appliancesFilter = []
+let ustensilsFilter = []
 
-const ingredientsFilterUpdate = (displayedRecipes) => {
+const tagsFilterUpdate = (displayedRecipes) => {
+    const selectedIngredients = document.querySelectorAll('.tags-section > div[tag-source="ingredients"]')
+    let ingredientDuplicates = []
+    selectedIngredients.forEach(tag => ingredientDuplicates.push(tag.getAttribute('tag-name')))
 
     ingredientsFilter = displayedRecipes.length > 1 ?
                         //1er map donne tout le sous-tableau ingredients avec les quantités et les unités
@@ -157,6 +163,8 @@ const ingredientsFilterUpdate = (displayedRecipes) => {
                         .map(ingredient => ingredient.slice(0,1).toUpperCase()+ingredient.slice(1).toLowerCase())
                         //éliminer les doublons
                         .filter((ingredient, ingredientIndex, table) => table.findIndex(t => (t === ingredient)) === ingredientIndex)
+                        //éliminer les tags déjà sélectionnés
+                        .filter(ingredient => !ingredientDuplicates.includes(ingredient))
                         //ranger par ordre alphabétique
                         .sort()
                         
@@ -167,15 +175,88 @@ const ingredientsFilterUpdate = (displayedRecipes) => {
                         //pas de .split si 1 seule recette en résultat
                         .map(ingredient => ingredient.slice(0,1).toUpperCase()+ingredient.slice(1).toLowerCase())
                         .filter((ingredient, ingredientIndex, table) => table.findIndex(t => (t === ingredient)) === ingredientIndex)
+                        .filter(ingredient => !ingredientDuplicates.includes(ingredient))
                         .sort()
 
+    const selectedAppliances = document.querySelectorAll('.tags-section > div[tag-source="appliance"]')
+    let applianceDuplicates = []
+    selectedAppliances.forEach(tag => applianceDuplicates.push(tag.getAttribute('tag-name')))
+
+    appliancesFilter =  displayedRecipes.map(recipe => recipe.appliance)
+                        .map(appliance => appliance.slice(0,1).toUpperCase()+appliance.slice(1).toLowerCase())
+                        .filter((appliance, applianceIndex, table) => table.findIndex(t => (t === appliance)) === applianceIndex)
+                        .filter(appliance => !applianceDuplicates.includes(appliance))
+                        .sort()
+
+    const selectedUstensils = document.querySelectorAll('.tags-section > div[tag-source="ustensils"]')
+    let ustensilDuplicates = []
+    selectedUstensils.forEach(tag => ustensilDuplicates.push(tag.getAttribute('tag-name')))
+
+    ustensilsFilter =  displayedRecipes.length > 1 ?
+                        displayedRecipes.map(recipe => recipe.ustensils)
+                        .reduce((allUstensils, ustensil) => allUstensils + ',' + ustensil)
+                        .split(',')
+                        .map(ustensil => ustensil.slice(0,1).toUpperCase()+ustensil.slice(1).toLowerCase())
+                        .filter((ustensil, ustensilIndex, table) => table.findIndex(t => (t === ustensil)) === ustensilIndex)
+                        .filter(ustensil => !ustensilDuplicates.includes(ustensil))
+                        .sort()
+                        
+                        :
+
+                        displayedRecipes.map(recipe => recipe.ustensils)
+                        .reduce((allUstensils, ustensil) => allUstensils + ',' + ustensil)
+                        .map(ustensil => ustensil.slice(0,1).toUpperCase()+ustensil.slice(1).toLowerCase())
+                        .filter((ustensil, ustensilIndex, table) => table.findIndex(t => (t === ustensil)) === ustensilIndex)
+                        .filter(ustensil => !ustensilDuplicates.includes(ustensil))
+                        .sort()
 }
 
-function tagsFactory(tag) {
+const removeTag = (tag) => {
+    const tagToRemove = document.querySelector('.tags-section > div[tag-name="'+tag+'"]')
+    const tagType = tagToRemove.getAttribute('tag-type')
+    //redescendre le filtre dans la liste des filtres non sélectionnés
+    const moveToList = document.getElementById(tagType+'-slider-list')
+    const filterToMove = document.querySelector('li[data-selected="true"][data-name="'+tag+'"][data-type="'+tagType+'"]')
+    moveToList.appendChild(filterToMove)
+    filterToMove.setAttribute('data-selected', 'false')
+    filterToMove.setAttribute('onclick', 'search("'+tag+'", "'+tagType+'-list'+'")')
+    //effacer le tag
+    tagToRemove.remove()
+
+    //relancer un search
+    search('', 'remove')
+}
+
+function tagsFactory(tag, source) {
+
+    let tagType = ''
+    switch (source) {
+        case 'ingredients-list':
+            source = 'ingredients'
+            tagType = 'ingredients'
+            break
+        
+        case 'appliances-list':
+            source = 'appliance'
+            tagType = 'appliances'
+            break
+
+        case 'ustensils-list':
+            source = 'ustensils'
+            tagType = 'ustensils'
+            break
+        default:
+            source = 'error'
+            tagType = 'error'
+            break
+    }
 
     function getTagDOM() {
         
         const container = document.createElement('div')
+        container.setAttribute('tag-name', tag)
+        container.setAttribute('tag-source', source)
+        container.setAttribute('tag-type', tagType)
         const tagName = document.createElement('div')
         tagName.textContent = tag
         const tagClose = document.createElement('div')
@@ -195,19 +276,20 @@ function tagsFactory(tag) {
     return { getTagDOM }
 }
 
-function displayTags(tag) {
-    const tagModel = tagsFactory(tag);
+function displayTags(tag, source) {
+    const tagModel = tagsFactory(tag, source);
     const tagDOM = tagModel.getTagDOM();
     const tagsSection = document.querySelector('.tags-section')
     tagsSection.appendChild(tagDOM); //construire son affichage en tant que tag
 
     //remonter le tag sélectionné en haut de la liste
-    const selectedTag = document.querySelector('li[data-name="'+tag+'"]')
-    const tagType = selectedTag.parentNode.getAttribute('id').slice(0,-12)
+    const tagType = source.slice(0,-5)
+    const selectedTag = document.querySelector('li[data-name="'+tag+'"][data-type="'+tagType+'"]')
     const selectedTagsList = document.getElementById('selected-'+tagType)
     selectedTagsList.appendChild(selectedTag)
     selectedTag.setAttribute('data-selected', 'true')
     selectedTag.setAttribute('onclick', 'removeTag("'+tag+'")')
+
 }
 
 function displayData(recipes) {
@@ -215,6 +297,10 @@ function displayData(recipes) {
     recipesSection.innerHTML = ''//réinitialiser la section des recettes
     const ingredientsList = document.getElementById("ingredients-slider-list");
     ingredientsList.innerHTML = ''//réinitialiser la liste des ingrédients
+    const appliancesList = document.getElementById("appliances-slider-list");
+    appliancesList.innerHTML = ''//réinitialiser la liste des appareils
+    const ustensilsList = document.getElementById("ustensils-slider-list");
+    ustensilsList.innerHTML = ''//réinitialiser la liste des ustensils
 
     recipes.map(recipe => {
         const recipeModel = recipeFactory(recipe);
@@ -222,25 +308,25 @@ function displayData(recipes) {
         recipesSection.appendChild(recipeCardDOM);
     })
 
-    /*for (let i=0; i<recipes.length; i++) {
-        const recipeModel = recipeFactory(recipes[i]);
-        const recipeCardDOM = recipeModel.getRecipeCardDOM();
-        recipesSection.appendChild(recipeCardDOM);
-    }*/
-
-    ingredientsFilterUpdate(recipes)
+    tagsFilterUpdate(recipes)
 
     ingredientsFilter.map(ingredientFilter => {
-        const ingredientModel = ingredientsFactory(ingredientFilter);
+        const ingredientModel = tagsListsFactory(ingredientFilter, 'ingredients');
         const ingredientDOM = ingredientModel.getIngredientDOM();
         ingredientsList.appendChild(ingredientDOM);
     })
-    
-    /*for (let i=0; i<ingredientsFilter.length; i++) {
-        const ingredientModel = ingredientsFactory(ingredientsFilter[i]);
-        const ingredientDOM = ingredientModel.getIngredientDOM();
-        ingredientsList.appendChild(ingredientDOM);
-    }*/
+
+    appliancesFilter.map(applianceFilter => {
+        const applianceModel = tagsListsFactory(applianceFilter, 'appliances');
+        const applianceDOM = applianceModel.getIngredientDOM();
+        appliancesList.appendChild(applianceDOM);
+    })
+
+    ustensilsFilter.map(ustensilFilter => {
+        const ustensilModel = tagsListsFactory(ustensilFilter, 'ustensils');
+        const ustensilDOM = ustensilModel.getIngredientDOM();
+        ustensilsList.appendChild(ustensilDOM);
+    })
 
 }
 

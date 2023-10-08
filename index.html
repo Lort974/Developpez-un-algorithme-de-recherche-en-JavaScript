@@ -53,31 +53,35 @@
                         <input type="text" name="ingredient-search" id="ingredient-search">
                         <i class="fa-solid fa-magnifying-glass" style="color: #C6C6C6;"></i>
                     </div>
-                    <div id="tags-lists" class="tags-list">
+                    <div class="tags-list" list-type="ingredients">
                         <ul id="selected-ingredients" class="selected-filter-list">
                         </ul>
                         <ul id="ingredients-slider-list" class="filter-list">
                         </ul>
                     </div>
                 </div>
-                <div class="filter-slider" id="appareils-slider" data-slide="up">
-                    <div onclick="toggleSlider('appareils-slider')">
+                <div class="filter-slider" id="appliances-slider" data-slide="up">
+                    <div onclick="toggleSlider('appliances-slider')">
                         <span>
                             Appareils
                         </span>
                         <i class="fa-solid fa-chevron-down" style="color: #1b1b1b;"></i>
                     </div>
                     <div>
-                        <input type="text" name="appareil-search" id="appareil-search">
+                        <input type="text" name="appliance-search" id="appliance-search">
                         <i class="fa-solid fa-magnifying-glass" style="color: #C6C6C6;"></i>
                     </div>
-                    <ul id="appareils-slider-list">
-                        <li data-display="true">Test</li><li data-display="true">Test</li><li data-display="true">Test</li><li data-display="true">Test</li></ul>
+                    <div class="tags-list" list-type="appliances">
+                        <ul id="selected-appliances" class="selected-filter-list">
+                        </ul>
+                        <ul id="appliances-slider-list" class="filter-list">
+                        </ul>
+                    </div>
                 </div>
                 <div class="filter-slider" id="ustensils-slider" data-slide="up">
                     <div onclick="toggleSlider('ustensils-slider')">
                         <span>
-                            Ustensiles
+                            Ustensils
                         </span>
                         <i class="fa-solid fa-chevron-down" style="color: #1b1b1b;"></i>
                     </div>
@@ -85,8 +89,12 @@
                         <input type="text" name="ustensil-search" id="ustensil-search">
                         <i class="fa-solid fa-magnifying-glass" style="color: #C6C6C6;"></i>
                     </div>
-                    <ul id="ustensils-slider-list">
-                        <li data-display="true">Test</li><li data-display="true">Test</li></ul>
+                    <div class="tags-list" list-type="ustensils">
+                        <ul id="selected-ustensils" class="selected-filter-list">
+                        </ul>
+                        <ul id="ustensils-slider-list" class="filter-list">
+                        </ul>
+                    </div>
                 </div>
             </div>
             <div>
