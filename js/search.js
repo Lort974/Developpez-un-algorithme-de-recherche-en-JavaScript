@@ -2,30 +2,43 @@
  * RECHERCHE DE FILTRES
  */
 
-const filterSearchBars = [
-    document.getElementById('ingredient-search'),
-    document.getElementById('appliance-search'),
-    document.getElementById('ustensil-search')
-]
+const ingredientSearchBar = document.getElementById('ingredient-search')
+const applianceSearchBar = document.getElementById('appliance-search')
+const ustensilSearchBar = document.getElementById('ustensil-search')
 
 //appel de la recherche
-filterSearchBars.forEach(bar => {
-    bar.addEventListener('keyup', () => {
-        filterSearch(bar.value, bar.getAttribute('id'))
-    })
-})
+ingredientSearchBar.addEventListener('keyup', () => {filterSearch(ingredientSearchBar.value, ingredientSearchBar.getAttribute('id'))})
+applianceSearchBar.addEventListener('keyup', () => {filterSearch(applianceSearchBar.value, applianceSearchBar.getAttribute('id'))})
+ustensilSearchBar.addEventListener('keyup', () => {filterSearch(ustensilSearchBar.value, ustensilSearchBar.getAttribute('id'))})
 
 const filterSearch = (term, source) => {
     const listType = source.slice(0, -7) + 's' //"ingredient-search" devient "ingredients" par exemple
     //se placer sur la bonne catagorie :
     const filterList = document.querySelectorAll('.tags-list[list-type="'+listType+'"] > .filter-list > li')
     let filterNames = [] //stocker tous les noms des filtre disponibles
-    filterList.forEach(element => {
+    for (let i = 0; i < filterList.length; i++) {
+        filterName = filterList[i].getAttribute('data-name')
+        filterNames.push(filterName)
+    }
+    /*filterList.forEach(element => {
         filterName = element.getAttribute('data-name')
         filterNames.push(filterName)
-    })
+    })*/
     //cacher ceux qui ne contiennent pas le terme recherché :
-    const filterToHide = filterNames.filter(name => !name.toLowerCase().includes(term.toLowerCase()))
+    const filterToShow = []
+    const filterToHide = []
+    for (i = 0; i < filterNames.length; i++) {
+        filterNames[i].toLowerCase().includes(term.toLowerCase()) ? filterToShow.push(filterNames[i]) : filterToHide.push(filterNames[i])
+    }
+    for (i = 0; i < filterToShow.length; i++) {
+        const show = document.querySelector('.tags-list[list-type="'+listType+'"] > .filter-list > li[data-name="'+filterToShow[i]+'"]')
+        show.style.display = 'block'
+    }
+    for (i = 0; i < filterToHide.length; i++) {
+        const hide = document.querySelector('.tags-list[list-type="'+listType+'"] > .filter-list > li[data-name="'+filterToHide[i]+'"]')
+        hide.style.display = 'none'
+    }
+    /*const filterToHide = filterNames.filter(name => !name.toLowerCase().includes(term.toLowerCase()))
     filterToHide.forEach(name => {
         const hide = document.querySelector('.tags-list[list-type="'+listType+'"] > .filter-list > li[data-name="'+name+'"]')
         hide.style.display = 'none'
@@ -35,12 +48,12 @@ const filterSearch = (term, source) => {
     filterToShow.forEach(name => {
         const show = document.querySelector('.tags-list[list-type="'+listType+'"] > .filter-list > li[data-name="'+name+'"]')
         show.style.display = 'block'
-    })
+    })*/
 }
 
 const searchBar = document.getElementById('main-search-bar')
 
-searchBar.addEventListener('keyup', (event) => {
+searchBar.addEventListener('keyup', () => {
     search(searchBar.value, 'search-bar')
 })
 
@@ -70,8 +83,6 @@ const removeDuplicates = (rawResults) => {
 
     return filteredResults
 }
-
-//on obtient les résultats des filtre + ceux de la searchbar. Il faudrait les résultats qui correspondent aux 2 en m^ tps
 
 const search = (term, source) => {
 
