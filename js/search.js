@@ -61,7 +61,40 @@ searchBar.addEventListener('keyup', () => {
 
 //SUPPRIMER LES DOUBLONS ET REVENIR A LA MISE EN FORME INITIALE DES RECETTES
 const removeDuplicates = (rawResults) => {
-    filteredResults = rawResults.filter((result, resultIndex, table) => table.findIndex(t => (t.id === result.id)) === resultIndex)
+
+    //repérer les doublons
+    duplicateResults = []
+
+    for (let i = 0; i < rawResults.length - 1; i++) {
+        rawResults.sort((a, b) => a.id - b.id)
+        if (rawResults[i]['id'] === rawResults[i+1]['id']) {
+            duplicateResults.push(rawResults[i])
+        }
+    }
+
+    //les supprimer
+    for (let i = 0; i < rawResults.length; i++) {
+        for (let j = 0; j < duplicateResults.length; j++) {
+            if (rawResults[i]['id'] === duplicateResults[j]['id']) {
+                rawResults.splice(i, 1)
+            }
+        }
+    }
+
+    //revenir au format de recettes initial
+    for (let i = 0; i < rawResults.length; i++) { //parcourir tous les résultats
+        recipeId = rawResults[i]['id'] //en obtenir l'id de la recette
+        //remplacer les propriétés ingredients, name, description et appliance par celles des recettes initiales
+        rawResults[i]['ingredients'] = recipes.find(recipe => recipe.id === recipeId)['ingredients']
+                                                //find pour trouver la recette dans recipes dont l'id est recipeId
+        rawResults[i]['name'] = recipes.find(recipe => recipe.id === recipeId)['name']
+        rawResults[i]['description'] = recipes.find(recipe => recipe.id === recipeId)['description']
+        rawResults[i]['appliance'] = recipes.find(recipe => recipe.id === recipeId)['appliance']
+    }
+
+    return rawResults
+
+    /*filteredResults = rawResults.filter((result, resultIndex, table) => table.findIndex(t => (t.id === result.id)) === resultIndex)
                                 /**
                                  * donne l'index du premier élément de globalResults dont "recipe.id" est égal
                                  * à "recipe.id" testé par filter()
@@ -69,7 +102,7 @@ const removeDuplicates = (rawResults) => {
                                  */
                                 
                                 //revenir aux propriétés initiales :
-                                .map(recipe => {
+                                /*.map(recipe => {
                                     // Trouver la recette correspondante dans le tableau 'recipes'
                                     const correspondingRecipe = recipes.find(r => r.id === recipe.id);
                                     
@@ -83,13 +116,38 @@ const removeDuplicates = (rawResults) => {
                                     }
                                 })
 
-    return filteredResults
+    return filteredResults*/
 }
 
 const search = (term, source) => {
 
     //CONVERTIR LES CRITERES A PARCOURIR SOUS FORME DE TABLEAU POUR FACILITER LEUR PARCOURS
-    const tabledCriteriaRecipes = recipes.map((recipe) => {
+    
+    let tabledCriteriaRecipes = []
+
+    for (i = 0; i < recipes.length; i++) {
+        tabledCriteriaRecipes.push(Object.assign({}, recipes[i])) //pour éviter de modifier racipes, on ne met pas tabledCriteriaRecipes = recipes
+    }
+
+    for (let i = 0; i < tabledCriteriaRecipes.length; i++) {
+
+        let ingredientsTable = []
+
+        for (let j = 0; j<tabledCriteriaRecipes[i]['ingredients'].length; j++) {
+
+            let ingredient = tabledCriteriaRecipes[i]['ingredients'][j]['ingredient']
+            ingredientsTable.push(ingredient)
+
+        }
+
+        tabledCriteriaRecipes[i]['ingredients'] = ingredientsTable
+        tabledCriteriaRecipes[i]['name'] = [tabledCriteriaRecipes[i]['name']]
+        tabledCriteriaRecipes[i]['description'] = [tabledCriteriaRecipes[i]['description']]
+        tabledCriteriaRecipes[i]['appliance'] = [tabledCriteriaRecipes[i]['appliance']]
+
+    }
+
+    /*const tabledCriteriaRecipes = recipes.map((recipe) => {
         //convertir la liste des ingrédients sous forme de tableau
         const ingredientsTable = recipe.ingredients.map(ingredients => ingredients.ingredient)
         //convertir l'appareil, le nom et la description sous forme de tableau :
@@ -104,32 +162,49 @@ const search = (term, source) => {
             description: descriptionTable,
             appliance: applianceTable
         }
-    })
+    })*/
 
     if (source === 'search-bar') {
 
         //fermer les sliders des filtres
         const sliders = ['ingredients-slider', 'appliances-slider', 'ustensils-slider']
-        sliders.forEach((e) => {
+        for (let i = 0; i < sliders.length; i++) {
+            sliderClose(sliders[i])
+        }
+        /*sliders.forEach((e) => {
             sliderClose(e)
-        })
+        })*/
 
         //supprimer les tags actifs
         const allTags = document.querySelectorAll('.tags-section > div')
-        allTags.forEach(tag => {
+        for (let i = 0; i < allTags.length; i++) {
+            tagToRemove = allTags[i].getAttribute('tag-name')
+            removeTag(tagToRemove)
+        }
+        /*allTags.forEach(tag => {
             tagToRemove = tag.getAttribute('tag-name')
             removeTag(tagToRemove)
-        })
+        })*/
 
         const searchBarTerm = searchBar.value.length >= 3 ? searchBar.value : ''
-        //sortir les recettes qui correspondent à la search bar (si au moins 3 caractères) :
-        const nameResults = tabledCriteriaRecipes.filter(recipe => recipe.name.some(item => item.toLowerCase().includes(searchBarTerm.toLowerCase())))
+        //sortir les recettes qui correspondent à la search bar (si au moins 3 caractères, sinon on considère la searchBar comme vide) :
+        /*const nameResults = []
+        for (let i = 0; i < tabledCriteriaRecipes.length; i++) {
+            if (tabledCriteriaRecipes[i].includes(tabledCriteriaRecipes[i]['name'].includes()))
+        }*/
+        const nameResults = tabledCriteriaRecipes.filter(
+            recipe => recipe.name.some(
+                item => item.toLowerCase().includes(
+                    searchBarTerm.toLowerCase()
+                )
+            )
+        )
         const descResults = tabledCriteriaRecipes.filter(recipe => recipe.description.some(item => item.toLowerCase().includes(searchBarTerm.toLowerCase())))
         const ingResults = tabledCriteriaRecipes.filter(recipe => recipe.ingredients.some(item => item.toLowerCase().includes(searchBarTerm.toLowerCase())))
 
         const searchBarResults = [...nameResults, ...descResults, ...ingResults]
 
-        removeDuplicates(searchBarResults)
+        const filteredResults = removeDuplicates(searchBarResults)
         displayData(filteredResults) //provient de removeDuplicates()
 
     }
@@ -162,7 +237,7 @@ const search = (term, source) => {
         })
     
         //fusionner et supprimer les doublons :
-        removeDuplicates(advancedResults)
+        const filteredResults = removeDuplicates(advancedResults)
         displayData(filteredResults)
 
     }
@@ -177,7 +252,10 @@ const search = (term, source) => {
     })
 
     //effacer les barres de recherche de filtres :
-    filterSearchBars.forEach(bar => bar.value = '')
+    ingredientSearchBar.value = ''
+    applianceSearchBar.value = ''
+    ustensilSearchBar.value = ''
+    //filterSearchBars.forEach(bar => bar.value = '')
 
 }
 
