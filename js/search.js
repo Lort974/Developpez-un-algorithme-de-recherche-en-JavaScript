@@ -164,6 +164,31 @@ const search = (term, source) => {
         }
     })*/
 
+    //FONCTION FACTORISEE POUR LA RECHERCHE A PARTIR D'UN TERME ET D'UNE SOURCE
+    const browse = (term, source, recipeIndex) => {
+        //initialiser un compteur
+        let matches = 0
+        let results
+        //parcourir la propriété "source" que chaque recette
+        for (let j = 0; j < tabledCriteriaRecipes[recipeIndex][source].length; j++) {
+            //si la valeur de la propriété correspond au terme de recherche
+            if (tabledCriteriaRecipes[recipeIndex][source][j].toLowerCase().includes(term.toLowerCase())) {
+                //incrémenter le compteur
+                matches++
+
+            }
+        }
+        //et si le compteur a été incrémenté
+        if (matches > 0) {
+            //la recette est à afficher
+            results = tabledCriteriaRecipes[recipeIndex]
+
+        }
+        //donc on la retourne
+        return results
+
+    }
+
     if (source === 'search-bar') {
 
         //fermer les sliders des filtres
@@ -171,41 +196,69 @@ const search = (term, source) => {
         for (let i = 0; i < sliders.length; i++) {
             sliderClose(sliders[i])
         }
-        /*sliders.forEach((e) => {
-            sliderClose(e)
-        })*/
-
         //supprimer les tags actifs
         const allTags = document.querySelectorAll('.tags-section > div')
         for (let i = 0; i < allTags.length; i++) {
             tagToRemove = allTags[i].getAttribute('tag-name')
             removeTag(tagToRemove)
         }
-        /*allTags.forEach(tag => {
-            tagToRemove = tag.getAttribute('tag-name')
-            removeTag(tagToRemove)
-        })*/
+        //initialiser les variables de résultats
+        let nameResults = []
+        let descResults = []
+        let ingResults = []
+        let defaultResults = [] //pour afficher toutes les recettes lorsque moins de 3 caractères
+        //si plus de 3 caractères
+        if (searchBar.value.length >= 3) {
+            //récupérer la valeur de la searchBar
+            const searchBarTerm = searchBar.value
+            //sortir les recettes qui correspondent à la search bar :
+            //parcourir les recettes
+            for (let i = 0; i < tabledCriteriaRecipes.length; i++) {
+                //recherche dans le nom :
+                //stocket le résultat de la fonction de recherche dans la variable correspondante
+                const nameResult = browse(searchBarTerm, 'name', i)
+                //s'il y a un résultat, c'est-à-dire si la valeur de retour est différente de undefined
+                if (nameResult != undefined) {
+                    //on récupère ce résultat
+                    nameResults.push(nameResult)
+    
+                }
+                //recherche dans la description :
+                const descResult = browse(searchBarTerm, 'description', i)
+    
+                if (descResult != undefined) {
+    
+                    descResults.push(descResult)
+    
+                }
+                //recherche dans les ingrédients :
+                const ingResult = browse(searchBarTerm, 'ingredients', i)
+    
+                if (ingResult != undefined) {
+    
+                    ingResults.push(ingResult)
+    
+                }
 
-        const searchBarTerm = searchBar.value.length >= 3 ? searchBar.value : ''
-        //sortir les recettes qui correspondent à la search bar (si au moins 3 caractères, sinon on considère la searchBar comme vide) :
-        /*const nameResults = []
-        for (let i = 0; i < tabledCriteriaRecipes.length; i++) {
-            if (tabledCriteriaRecipes[i].includes(tabledCriteriaRecipes[i]['name'].includes()))
-        }*/
-        const nameResults = tabledCriteriaRecipes.filter(
-            recipe => recipe.name.some(
-                item => item.toLowerCase().includes(
-                    searchBarTerm.toLowerCase()
-                )
-            )
-        )
-        const descResults = tabledCriteriaRecipes.filter(recipe => recipe.description.some(item => item.toLowerCase().includes(searchBarTerm.toLowerCase())))
-        const ingResults = tabledCriteriaRecipes.filter(recipe => recipe.ingredients.some(item => item.toLowerCase().includes(searchBarTerm.toLowerCase())))
+            }
 
-        const searchBarResults = [...nameResults, ...descResults, ...ingResults]
+        }
+        //sinon, si moins de 3 caractères
+        else {
 
+            for (let i = 0; i < tabledCriteriaRecipes.length; i++) {
+                //on affichera toutes les recettes :
+                defaultResults.push(tabledCriteriaRecipes[i])
+
+            }
+
+        }
+        //rassembler tous les résultats en 1
+        const searchBarResults = [...nameResults, ...descResults, ...ingResults, ...defaultResults]
+        //retirer les doublons et revenir à la mise en forme originelle :
         const filteredResults = removeDuplicates(searchBarResults)
-        displayData(filteredResults) //provient de removeDuplicates()
+        //afficher les résultats
+        displayData(filteredResults)
 
     }
 
@@ -220,21 +273,41 @@ const search = (term, source) => {
 
         }
         
-        //stocker tous les tags dans un tableau
-        //maper ce tableau pour sortir un objet du type : [{"term":"term1","source":"source1"},{"term":"term2","source":"source2"}]
-    
+        //repérer tous les tags sélectionnés
         const allTags = document.querySelectorAll('.tags-section > div')
-        
+        //préparer la liste des termes de recherche avancés
         let advancedTerms = []
+        //pour chacun des tags sélectionnés
+        for (let i = 0; i < allTags.length; i++) {
+            //ajouter le nom du terme et sa source dans la liste des termes de recherche avancé
+            advancedTerms.push({term: allTags[i].getAttribute('tag-name'), source: allTags[i].getAttribute('tag-source')})
+
+        }
         
-        allTags.forEach((tag) => advancedTerms.push({term: tag.getAttribute('tag-name'), source: tag.getAttribute('tag-source')}))
-    
+        /*allTags.forEach((tag) => advancedTerms.push({term: tag.getAttribute('tag-name'), source: tag.getAttribute('tag-source')}))*/
+
         //sortir les recettes qui correspondent aux filtres de recherche avancés :
-        let advancedResults = tabledCriteriaRecipes.filter(recipe => {
+        //initialiter la variable des résultats
+        let advancedResults = []
+        //parcourir toutes les recettes
+        for (i = 0; i < tabledCriteriaRecipes.length; i++) {
+            //parcourir tous les termes avancés (item), y appliquer la fonction de recherche et vérifier si la valeur retournée n'est pas undefined
+            //si c'est bien le cas, alors allTagsMatch vaut TRUE et ça signifie que la recette testée correspond à tous les tags à la fois
+            const allTagsMatch = advancedTerms.every(item => browse(item['term'], item['source'], i) != undefined)
+            //si c'est bien true
+            if (allTagsMatch) {
+                //alors la recette est retenue
+                advancedResults.push(tabledCriteriaRecipes[i])
+
+            }
+
+        }
+
+        /*let advancedResults = tabledCriteriaRecipes.filter(recipe => {
             return advancedTerms.every(criterion => {
                 return recipe[criterion.source].map(item => item.toLowerCase()).includes(criterion.term.toLowerCase())
             })
-        })
+        })*/
     
         //fusionner et supprimer les doublons :
         const filteredResults = removeDuplicates(advancedResults)
@@ -244,12 +317,24 @@ const search = (term, source) => {
 
     //redimensionner les sliders ouverts
     const sliders = ['ingredients-slider', 'appliances-slider', 'ustensils-slider']
-    sliders.forEach(sliderId => {
+
+    for (i = 0; i < sliders.length; i++) {
+
+        const sliderStatus = document.getElementById(sliders[i]).getAttribute('data-slide')
+
+        if (sliderStatus === 'down') {
+
+            sliderResize(sliders[i])   
+
+        }
+        
+    }
+    /*sliders.forEach(sliderId => {
         const sliderStatus = document.getElementById(sliderId).getAttribute('data-slide')
         if (sliderStatus === 'down') {
             sliderResize(sliderId)            
         }
-    })
+    })*/
 
     //effacer les barres de recherche de filtres :
     ingredientSearchBar.value = ''
