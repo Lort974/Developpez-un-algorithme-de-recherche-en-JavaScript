@@ -25,7 +25,7 @@ const sliderResize = (sliderId) => {
                         
                         :
 
-                        126 + 31*listLength
+                        130 + 31*listLength
 
     slider.style.height = sliderHeight+'px'
 
