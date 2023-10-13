@@ -351,6 +351,12 @@ function displayData(recipes) {
         recipesSection.appendChild(recipeCardDOM);
     }
 
+    //afficher le nombre de recettes trouvées
+    document.querySelector('.filter-section > div:nth-child(2)').textContent = recipes.length > 1 ? 
+        recipes.length + ' recettes'
+        : 
+        recipes.length + ' recette'
+
     tagsFilterUpdate(recipes)
 
     for (let i = 0; i < ingredientsFilter.length; i++) {

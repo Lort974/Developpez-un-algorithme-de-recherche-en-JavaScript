@@ -204,14 +204,13 @@ const search = (term, source) => {
         //retirer les doublons et revenir à la mise en forme originelle :
         const filteredResults = removeDuplicates(searchBarResults)
         //afficher les résultats
-        filteredResults.length > 0 ?
-            displayData(filteredResults)
-            :
+        displayData(filteredResults)
+        //afficher le message d'erreur si aucune recette n'est trouvée
+        if (filteredResults.length === 0) {
+
             document.querySelector('.recipes-section').textContent = 'Aucune recette ne contient "'+searchBarTerm+'", vous pouvez chercher "tarte aux pommes", "poisson", etc.'
-        document.querySelector('.filter-section > div:nth-child(2)').textContent = filteredResults.length > 1 ? 
-            filteredResults.length + ' recettes'
-            : 
-            filteredResults.length + ' recette'
+        
+        }
 
     }
 
@@ -257,11 +256,6 @@ const search = (term, source) => {
         //fusionner et supprimer les doublons :
         const filteredResults = removeDuplicates(advancedResults)
         displayData(filteredResults)
-        //afficher le nombre de recettes trouvées
-        document.querySelector('.filter-section > div:nth-child(2)').textContent = filteredResults.length > 1 ? 
-            filteredResults.length + ' recettes'
-            : 
-            filteredResults.length + ' recette'
 
     }
 
