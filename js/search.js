@@ -22,10 +22,6 @@ const filterSearch = (term, source) => {
         filterName = filterList[i].getAttribute('data-name')
         filterNames.push(filterName)
     }
-    /*filterList.forEach(element => {
-        filterName = element.getAttribute('data-name')
-        filterNames.push(filterName)
-    })*/
     //cacher ceux qui ne contiennent pas le terme recherché :
     const filterToShow = []
     const filterToHide = []
@@ -40,17 +36,7 @@ const filterSearch = (term, source) => {
         const hide = document.querySelector('.tags-list[list-type="'+listType+'"] > .filter-list > li[data-name="'+filterToHide[i]+'"]')
         hide.style.display = 'none'
     }
-    /*const filterToHide = filterNames.filter(name => !name.toLowerCase().includes(term.toLowerCase()))
-    filterToHide.forEach(name => {
-        const hide = document.querySelector('.tags-list[list-type="'+listType+'"] > .filter-list > li[data-name="'+name+'"]')
-        hide.style.display = 'none'
-    })
-    //montrer ceux qui contiennent le terme recherché :
-    const filterToShow = filterNames.filter(name => name.toLowerCase().includes(term.toLowerCase()))
-    filterToShow.forEach(name => {
-        const show = document.querySelector('.tags-list[list-type="'+listType+'"] > .filter-list > li[data-name="'+name+'"]')
-        show.style.display = 'block'
-    })*/
+
 }
 
 const searchBar = document.getElementById('main-search-bar')
@@ -94,29 +80,6 @@ const removeDuplicates = (rawResults) => {
 
     return rawResults
 
-    /*filteredResults = rawResults.filter((result, resultIndex, table) => table.findIndex(t => (t.id === result.id)) === resultIndex)
-                                /**
-                                 * donne l'index du premier élément de globalResults dont "recipe.id" est égal
-                                 * à "recipe.id" testé par filter()
-                                 * ce premier élément est inclus dans filteredResults si son index est aussi le même
-                                 */
-                                
-                                //revenir aux propriétés initiales :
-                                /*.map(recipe => {
-                                    // Trouver la recette correspondante dans le tableau 'recipes'
-                                    const correspondingRecipe = recipes.find(r => r.id === recipe.id);
-                                    
-                                    // remplacer les valeurs trouvées correspondantes
-                                    return {
-                                        ...recipe,
-                                        ingredients: correspondingRecipe.ingredients,
-                                        name: correspondingRecipe.name,
-                                        description: correspondingRecipe.description,
-                                        appliance: correspondingRecipe.appliance
-                                    }
-                                })
-
-    return filteredResults*/
 }
 
 const search = (term, source) => {
@@ -146,23 +109,6 @@ const search = (term, source) => {
         tabledCriteriaRecipes[i]['appliance'] = [tabledCriteriaRecipes[i]['appliance']]
 
     }
-
-    /*const tabledCriteriaRecipes = recipes.map((recipe) => {
-        //convertir la liste des ingrédients sous forme de tableau
-        const ingredientsTable = recipe.ingredients.map(ingredients => ingredients.ingredient)
-        //convertir l'appareil, le nom et la description sous forme de tableau :
-        const applianceTable = [recipe.appliance]
-        const nameTable = [recipe.name]
-        const descriptionTable = [recipe.description]
-
-        return {
-            ...recipe,
-            ingredients: ingredientsTable,
-            name: nameTable,
-            description: descriptionTable,
-            appliance: applianceTable
-        }
-    })*/
 
     //FONCTION FACTORISEE POUR LA RECHERCHE A PARTIR D'UN TERME ET D'UNE SOURCE
     const browse = (term, source, recipeIndex) => {
@@ -207,10 +153,10 @@ const search = (term, source) => {
         let descResults = []
         let ingResults = []
         let defaultResults = [] //pour afficher toutes les recettes lorsque moins de 3 caractères
+        //récupérer la valeur de la searchBar
+        const searchBarTerm = searchBar.value
         //si plus de 3 caractères
-        if (searchBar.value.length >= 3) {
-            //récupérer la valeur de la searchBar
-            const searchBarTerm = searchBar.value
+        if (searchBarTerm.length >= 3) {
             //sortir les recettes qui correspondent à la search bar :
             //parcourir les recettes
             for (let i = 0; i < tabledCriteriaRecipes.length; i++) {
@@ -258,7 +204,14 @@ const search = (term, source) => {
         //retirer les doublons et revenir à la mise en forme originelle :
         const filteredResults = removeDuplicates(searchBarResults)
         //afficher les résultats
-        displayData(filteredResults)
+        filteredResults.length > 0 ?
+            displayData(filteredResults)
+            :
+            document.querySelector('.recipes-section').textContent = 'Aucune recette ne contient "'+searchBarTerm+'", vous pouvez chercher "tarte aux pommes", "poisson", etc.'
+        document.querySelector('.filter-section > div:nth-child(2)').textContent = filteredResults.length > 1 ? 
+            filteredResults.length + ' recettes'
+            : 
+            filteredResults.length + ' recette'
 
     }
 
@@ -284,8 +237,6 @@ const search = (term, source) => {
 
         }
         
-        /*allTags.forEach((tag) => advancedTerms.push({term: tag.getAttribute('tag-name'), source: tag.getAttribute('tag-source')}))*/
-
         //sortir les recettes qui correspondent aux filtres de recherche avancés :
         //initialiter la variable des résultats
         let advancedResults = []
@@ -302,16 +253,15 @@ const search = (term, source) => {
             }
 
         }
-
-        /*let advancedResults = tabledCriteriaRecipes.filter(recipe => {
-            return advancedTerms.every(criterion => {
-                return recipe[criterion.source].map(item => item.toLowerCase()).includes(criterion.term.toLowerCase())
-            })
-        })*/
     
         //fusionner et supprimer les doublons :
         const filteredResults = removeDuplicates(advancedResults)
         displayData(filteredResults)
+        //afficher le nombre de recettes trouvées
+        document.querySelector('.filter-section > div:nth-child(2)').textContent = filteredResults.length > 1 ? 
+            filteredResults.length + ' recettes'
+            : 
+            filteredResults.length + ' recette'
 
     }
 
@@ -329,18 +279,11 @@ const search = (term, source) => {
         }
         
     }
-    /*sliders.forEach(sliderId => {
-        const sliderStatus = document.getElementById(sliderId).getAttribute('data-slide')
-        if (sliderStatus === 'down') {
-            sliderResize(sliderId)            
-        }
-    })*/
 
     //effacer les barres de recherche de filtres :
     ingredientSearchBar.value = ''
     applianceSearchBar.value = ''
     ustensilSearchBar.value = ''
-    //filterSearchBars.forEach(bar => bar.value = '')
 
 }
 
