@@ -294,7 +294,7 @@ function displayTags(tag, source) {
 
 }
 
-function displayData(recipes) {
+function displayData(calledRecipes) {
     const recipesSection = document.querySelector(".recipes-section");
     recipesSection.innerHTML = ''//réinitialiser la section des recettes
     const ingredientsList = document.getElementById("ingredients-slider-list");
@@ -304,13 +304,20 @@ function displayData(recipes) {
     const ustensilsList = document.getElementById("ustensils-slider-list");
     ustensilsList.innerHTML = ''//réinitialiser la liste des ustensils
 
-    recipes.map(recipe => {
+    calledRecipes.map(recipe => {
         const recipeModel = recipeFactory(recipe);
         const recipeCardDOM = recipeModel.getRecipeCardDOM();
         recipesSection.appendChild(recipeCardDOM);
     })
 
-    tagsFilterUpdate(recipes)
+    //afficher le nombre de recettes trouvées
+    document.querySelector('.filter-section > div:nth-child(2)').textContent = calledRecipes.length > 1 ?
+        calledRecipes.length + ' recettes'
+        :
+        calledRecipes.length + ' recette'
+
+    //afficher les tags correspondant aux recettes affichées ou à défaut à toutes les recettes
+    tagsFilterUpdate(calledRecipes.length > 1 ? calledRecipes : recipes)
 
     ingredientsFilter.map(ingredientFilter => {
         const ingredientModel = tagsListsFactory(ingredientFilter, 'ingredients');
