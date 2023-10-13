@@ -119,13 +119,6 @@ const search = (term, source) => {
         const searchBarResults = [...nameResults, ...descResults, ...ingResults]
 
         removeDuplicates(searchBarResults)
-        //afficher le mesage d'erreur si aucune recette n'est trouvée :
-        if (filteredResults.length === 0) {
-            console.log('Aucune recette ne contient '+searchBarTerm+'. Vous pouvez chercher "tarte aux pommes", "poisson", etc.')
-            console.log(document.querySelector('.recipes-section'))
-            document.querySelector('.recipes-section').textContent = 'caca'
-            console.log(document.querySelector('.recipes-section').textContent)
-        }
         displayData(filteredResults) //provient de removeDuplicates()
 
     }

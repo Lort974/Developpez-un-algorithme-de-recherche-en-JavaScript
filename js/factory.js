@@ -310,6 +310,13 @@ function displayData(calledRecipes) {
         recipesSection.appendChild(recipeCardDOM);
     })
 
+    if (calledRecipes.length === 0) {
+
+        const searchBarTerm = document.getElementById('main-search-bar').value
+        document.querySelector('.recipes-section').textContent = 'Aucune recette ne contient "'+searchBarTerm+'", vous pouvez chercher "tarte aux pommes", "poisson", etc.'
+    
+    }
+
     //afficher le nombre de recettes trouvées
     document.querySelector('.filter-section > div:nth-child(2)').textContent = calledRecipes.length > 1 ?
         calledRecipes.length + ' recettes'
