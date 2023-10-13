@@ -18,14 +18,14 @@ const toggleSlider = (sliderId) => {
 const sliderResize = (sliderId) => {
 
     const slider = document.getElementById(sliderId)
-    const listLength = slider.children[2].children[1].children.length
+    const listLength = slider.children[2].children[0].children.length + slider.children[2].children[1].children.length
     let sliderHeight = listLength > 6 ? 
 
                         315
                         
                         :
 
-                        126 + 31*listLength
+                        130 + 31*listLength
 
     slider.style.height = sliderHeight+'px'
 
