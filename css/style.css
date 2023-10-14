@@ -12,17 +12,6 @@ section {
     padding: 28px 0;
 }
 
-h1 {
-    font-family: 'Anton';
-    color: var(--yellow, #FFD15B);
-    text-align: center;
-    font-size: 44px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
-    margin-top: 168px;
-}
-
 .page-header {
     background-image: url(../img/header-background.jpeg);
     background-repeat: no-repeat;
@@ -40,10 +29,56 @@ h1 {
 .searchbar-container {
     display: flex;
     justify-content: center;
-    width: 950px;
+    max-width: 950px;
     margin: 30px auto 0 auto;
-    padding-bottom: 268px;
     position: relative;
+}
+
+@media screen and (max-width: 425px) {
+    .searchbar-container {
+        padding: 0px 10px 78px 10px;
+    }
+
+    .searchbar-container > button {
+        right: 20px;
+    }
+
+    h1 {
+        font-size: 28px;
+        margin-top: 78px;
+    }
+
+    h1 > br {
+        display: none;
+    }
+
+    main {
+        padding: 0 10px 50px;
+    }
+}
+
+@media screen and (min-width: 426px) {
+    .searchbar-container {
+        padding: 0px 48px 268px 48px;
+    }
+
+    .searchbar-container > button {
+        right: 58px;
+    }
+
+    h1 {
+        font-size: 44px;
+        margin-top: 168px;
+    }
+}
+
+h1 {
+    font-family: 'Anton';
+    color: var(--yellow, #FFD15B);
+    text-align: center;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
 }
 
 .searchbar-container > input[type="text"] {
@@ -53,6 +88,16 @@ h1 {
     width: 100%;
 }
 
+.searchbar-container:has(#main-search-bar:focus:not(:placeholder-shown))::after {
+    content: 'x';
+    position: absolute;
+    top: 21px;
+    font-size: 20px;
+    right: 125px;
+    padding: 0px 10px 2px 10px;
+    cursor: pointer;
+}
+
 .searchbar-container > button {
     height: 50px;
     width: 50px;
@@ -60,11 +105,20 @@ h1 {
     background-color: #1B1B1B;
     border: none;
     position: absolute;
-    right: 10px;
     top: 10px;
+    transition: all 200ms ease;
+}
+
+.searchbar-container > button:hover {
+    background-color: #FFD15B;
+}
+
+.searchbar-container > button:hover > i {
+    color: #1B1B1B !important;
 }
 
 .searchbar-container > button > i {
+    transition: all 200ms ease;
     font-size: 24px;
 }
 
@@ -82,6 +136,62 @@ h1 {
     display: flex;
     gap: 65px;
     align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+@media screen and (max-width: 1150px) {
+    .filter-section {
+        display: flex;
+        flex-direction: column;
+        gap: 28px;
+    }
+
+    .filter-section > div:nth-child(1) {
+        order: 2;
+    }
+
+    .filter-section > div:nth-child(2) {
+        order: 1;
+        align-self: flex-end;
+    }
+
+    .recipes-section {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media screen and (max-width: 1150px) and (min-width: 426px) {
+    main {
+        padding: 0 50px 50px;
+    }
+}
+
+@media screen and (min-width: 1151px) {
+    .recipes-section {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+}
+
+@media screen and (max-width: 1003px) {
+    .filter-section > div:nth-child(1) {
+        row-gap: 25px;
+    }
+}
+
+@media screen and (min-width: 851px) {
+    .filter-section > div:nth-child(1) > div {
+        width: 222px;
+    }
+}
+
+@media screen and (max-width: 850px) {
+    .filter-section > div:nth-child(1) > div {
+        width: 100%;
+    }
+
+    .recipes-section {
+        grid-template-columns: 1fr;
+    }
 }
 
 .filter-section > div:nth-child(1) > div {
@@ -90,7 +200,6 @@ h1 {
     height: 55px;
     max-height: 315px;
     overflow: hidden;
-    width: 222px;
     transition: all 200ms ease;
 }
 
@@ -171,6 +280,23 @@ h1 {
     font-size: 0.8em;
 }
 
+@media screen and (max-width: 768px) {
+    .selected-filter-list > li::after {
+        content: 'x';
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        background-color: #1B1B1B;
+        color: #FFD15B;
+        padding: 0px 6px 3px 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 20px;
+        font-size: 0.8em;
+    }
+}
+
 .selected-filter-list > li:last-child {
     margin-bottom: 15px;
 }
@@ -186,7 +312,6 @@ h1 {
 
 .recipes-section {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
     grid-gap: 48px;
 }
 

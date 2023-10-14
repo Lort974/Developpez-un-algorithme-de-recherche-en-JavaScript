@@ -324,7 +324,7 @@ function displayData(calledRecipes) {
         calledRecipes.length + ' recette'
 
     //afficher les tags correspondant aux recettes affichées ou à défaut à toutes les recettes
-    tagsFilterUpdate(calledRecipes.length > 1 ? calledRecipes : recipes)
+    tagsFilterUpdate(calledRecipes.length >= 1 ? calledRecipes : recipes)
 
     ingredientsFilter.map(ingredientFilter => {
         const ingredientModel = tagsListsFactory(ingredientFilter, 'ingredients');
