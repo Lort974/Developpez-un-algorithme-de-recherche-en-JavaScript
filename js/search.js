@@ -1,7 +1,7 @@
 /**MAP REDUCE FILTER VERSION */
 
 /**
- * RECHERCHE DE FILTRES
+ * RECHERCHE DE FILTRE
  */
 
 const filterSearchBars = [
