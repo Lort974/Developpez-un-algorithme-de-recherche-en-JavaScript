@@ -1,7 +1,7 @@
 /**FOR LOOP VERSION */
 
 /**
- * RECHERCHE DE FILTRES
+ * RECHERCHE DE FILTRE
  */
 
 const ingredientSearchBar = document.getElementById('ingredient-search')
