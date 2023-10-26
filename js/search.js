@@ -75,40 +75,49 @@ const removeDuplicates = (rawResults) => {
 
 //on obtient les résultats des filtre + ceux de la searchbar. Il faudrait les résultats qui correspondent aux 2 en m^ tps
 
-const search = (term, source) => {
+const search = (term, source, noReset) => {
 
     //CONVERTIR LES CRITERES A PARCOURIR SOUS FORME DE TABLEAU POUR FACILITER LEUR PARCOURS
-    const tabledCriteriaRecipes = recipes.map((recipe) => {
-        //convertir la liste des ingrédients sous forme de tableau
-        const ingredientsTable = recipe.ingredients.map(ingredients => ingredients.ingredient)
-        //convertir l'appareil, le nom et la description sous forme de tableau :
-        const applianceTable = [recipe.appliance]
-        const nameTable = [recipe.name]
-        const descriptionTable = [recipe.description]
-
-        return {
-            ...recipe,
-            ingredients: ingredientsTable,
-            name: nameTable,
-            description: descriptionTable,
-            appliance: applianceTable
-        }
-    })
+    const criteriaToTable = (recipesList) => {
+        const tabledCriteriaRecipes = recipesList.map((recipe) => {
+            //convertir la liste des ingrédients sous forme de tableau
+            const ingredientsTable = recipe.ingredients.map(ingredients => ingredients.ingredient)
+            //convertir l'appareil, le nom et la description sous forme de tableau :
+            const applianceTable = [recipe.appliance]
+            const nameTable = [recipe.name]
+            const descriptionTable = [recipe.description]
+    
+            return {
+                ...recipe,
+                ingredients: ingredientsTable,
+                name: nameTable,
+                description: descriptionTable,
+                appliance: applianceTable
+            }
+        })
+        return tabledCriteriaRecipes
+    }
 
     if (source === 'search-bar') {
 
-        //fermer les sliders des filtres
-        const sliders = ['ingredients-slider', 'appliances-slider', 'ustensils-slider']
-        sliders.forEach((e) => {
-            sliderClose(e)
-        })
+        //convertir toutes les recettes
+        tabledCriteriaRecipes = criteriaToTable(recipes)
 
-        //supprimer les tags actifs
-        const allTags = document.querySelectorAll('.tags-section > div')
-        allTags.forEach(tag => {
-            tagToRemove = tag.getAttribute('tag-name')
-            removeTag(tagToRemove)
-        })
+        if (noReset != true) { //si la recherche n'est pas appelée par la sélection d'un tag
+            //fermer les sliders des filtres
+            const sliders = ['ingredients-slider', 'appliances-slider', 'ustensils-slider']
+            sliders.forEach((e) => {
+                sliderClose(e)
+            })
+    
+            //supprimer les tags actifs
+            const allTags = document.querySelectorAll('.tags-section > div')
+            allTags.forEach(tag => {
+                tagToRemove = tag.getAttribute('tag-name')
+                removeTag(tagToRemove)
+            })
+        }
+
 
         const searchBarTerm = searchBar.value.length >= 3 ? searchBar.value : ''
         //sortir les recettes qui correspondent à la search bar (si au moins 3 caractères) :
@@ -130,9 +139,23 @@ const search = (term, source) => {
             displayTags(term, source)
             
             //effacer la searchBar
-            searchBar.value = ''
+            //searchBar.value = ''
 
         }
+
+        //relancer d'abord la recherche principale
+        search(searchBar.value, 'search-bar', true)
+
+        //convertir les recettes actuellement affichées
+        const displayedArticles = document.querySelectorAll('.recipes-section > article')
+        const displayedIds = []
+        displayedArticles.forEach((article) => {
+            displayedIds.push(parseInt(article.getAttribute('data-id')))
+        })
+
+        displayedRecipes = recipes.filter(recipe => displayedIds.includes(recipe.id))
+
+        tabledCriteriaRecipes = criteriaToTable(displayedRecipes)
         
         //stocker tous les tags dans un tableau
         //maper ce tableau pour sortir un objet du type : [{"term":"term1","source":"source1"},{"term":"term2","source":"source2"}]
